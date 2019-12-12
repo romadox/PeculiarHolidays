@@ -1,0 +1,747 @@
+<style>
+:root {
+    --winter-border: #7A4FAC;
+    --spring-border: #66B713;
+    --summer-border: #CBBD16;
+    --autumn-border: #CB8816;
+    --winter-hover: #6E3DA8;
+    --spring-hover: #569E0D;
+    --summer-hover: #B2A40D;
+    --autumn-hover: #AE720D;
+    --winter-wdays: #63319C;
+    --spring-wdays: #4E9605;
+    --summer-wdays: #A69905;
+    --autumn-wdays: #A66A05;
+}
+* {
+    box-sizing: border-box;
+    font-family: Courier, monospace;
+}
+ul {list-style-type: none;}
+
+.month {
+    width:100%;
+    min-width: 720px;
+    text-align: center;
+}
+
+.winter .month {
+    background: var(--winter-border);
+}
+
+.winter .prev:hover {
+    background: var(--winter-hover);
+}
+
+.winter .next:hover {
+    background: var(--winter-hover);
+}
+
+.winter .weekdays {
+    background: var(--winter-wdays);
+}
+
+.spring .month {
+    background: var(--spring-border);
+}
+
+.spring .prev:hover {
+    background: var(--spring-hover);
+}
+
+.spring .next:hover {
+    background: var(--spring-hover);
+}
+
+.spring .weekdays {
+    background: var(--spring-wdays);
+}
+
+.summer .month {
+    background: var(--summer-border);
+}
+
+.summer .prev:hover {
+    background: var(--summer-hover);
+}
+
+.summer .next:hover {
+    background: var(--summer-hover);
+}
+
+.summer .weekdays {
+    background: var(--summer-wdays);
+}
+
+.autumn .month {
+    background: var(--autumn-border);
+}
+
+.autumn .prev:hover {
+    background: var(--autumn-hover);
+}
+
+.autumn .next:hover {
+    background: var(--autumn-hover);
+}
+
+.autumn .weekdays {
+    background: var(--autumn-wdays);
+}
+
+.month ul {
+    width:100%;
+    min-width:720px;
+    margin: 0;
+    padding: 0;
+}
+
+.month ul li {
+    padding:15px;
+    color: white;
+    font-size: 20px;
+    text-align:center;
+    text-transform: uppercase;
+    letter-spacing: 4px;
+}
+
+.month .prev {
+    cursor: pointer;
+    float: left;
+    padding: 12px;
+    margin: 12px;
+}
+
+.month .next {
+    cursor: pointer;
+    float: right;
+    padding: 12px;
+    margin:12px;
+}
+
+.weekdays {
+    min-width:720px;
+    margin: 0;
+    padding: 8px 0;
+}
+
+.weekdays li {
+    display: inline-block;
+    width: 13.1%;
+    color: #FFF;
+    text-align: center;
+}
+
+.days {
+    min-width:720px;
+    padding: 10px 0px;
+    background: #eee;
+    margin: 0;
+}
+
+.days li {
+    /*padding: 5px;*/
+    list-style-type: none;
+    display: inline-grid;
+    width: 13.1%;
+    margin-bottom: 5px;
+}
+
+.days li:hover {
+    background: #ddd;
+}
+
+.daylabel {
+    height:60px;
+    text-align:center;
+    font-size: 11px;
+    padding: 8px 0px;
+}
+
+.dayno {
+    font-size:12px;
+    text-align:left;
+    color:#333;
+    padding: 0px 3px;
+}
+
+.dayno .none {
+    background: #ddd;
+    color: #fff;
+    width: 100%;
+}
+
+.reg {
+    background: #A1DB55;
+}
+
+.spec {
+    background: #5D79C5;
+}
+
+.rar {
+    background: #E195EC;
+}
+
+.lgnd {
+    background: #FFAC2A;
+}
+
+.regular {
+    font-weight:bold;
+    color:#4E8901;
+}
+
+.special {
+    font-weight:bold;
+    color:#0E2F89;
+}
+
+.rare {
+    font-weight:bold;
+    color:#A91FBC;
+    /*color:8F03A2;*/
+}
+
+.legend {
+    font-weight:bold;
+    color:#B97408;
+}
+</style>
+
+<script>
+    var R_SCALE = 2**32;
+    var LEGEND_RATE = 0.0026 * R_SCALE;
+    var RARE_RATE = 0.006 * R_SCALE;
+    var SPEC_RATE = 0.04 * R_SCALE;
+    var REG_RATE = 0.11 * R_SCALE;
+
+    var types = [
+        "* Day", "* Day", "* Dawn", "* Morning", "* Lunch", "* Evening", "* Night", "* Eve",
+        "* Fest", "* Festival", "* Dance", "* Ball", "* Feast", "* Faire", "*'s Day",
+        "*fest", "*ween", "*mas", "*sgiving", "*tide", "*morn", "*day", "*DOW", "*DOW",
+        "Day", "Morning", "Brunch", "Lunch", "Evening", "Night",
+        "Fest", "Festival", "Dance", "Ball", "Dinner", "Feast", "Faire", "Celebration",
+    ];
+    var topics = [
+        // 0 - WATER ANIMALS
+        "Fish", "Shark", "Whale", "Dolphin", "Seal", "Squid", "Octopus", "Eel",
+        "Turtle", "Frog", "Penguin", "Otter", "Crayfish", "Lobster", "Crab", "Starfish",
+        "Tadpole", "Jellyfish", "Carp", "Catfish", "Sunfish", "Swordfish", "*Tuna", "Seagull",
+        "Koi", "Goldfish", "Serpent", "Minnow", "Trout", "Salmon", "Ray", "Oyster",
+        // 1 - DOMESTIC ANIMALS
+        "Dog", "Cat", "Cow", "Sheep", "Horse", "Goat", "Chicken", "Duck",
+        "Goose", "Llama", "Rabbit", "Guinea Pig", "Pig", "Parrot", "Mouse", "Rat",
+        "Bull", "Ox", "Ram", "Peacock", "Hen", "Rooster", "Pigeon", "Dove",
+        "Dog Park", "Housecat", "Alley Cat", "Pup", "Puppy", "Kitten", "Hound", "*Fetching",
+        // 2 - INSECTS / SMALL ANIMALS
+        "Fly", "Butterfly", "Dragonfly", "Mosquito", "Spider", "Beetle", "Ant", "Wasp",
+        "Bee", "Cicada", "Grasshopper", "Cricket", "Pillbug", "Snail", "Slug", "Scorpion",
+        "Toad", "Lizard", "Salamander", "Centipede", "Mite", "Hedgehog", "Gnat", "Mole",
+        "Moth", "Orb Weaver", "Jumping Spider", "Squirrel", "Raccoon", "Opossum", "Chipmunk", "Skunk",
+        // 3 - WILD ANIMALS
+        "Bird", "Sparrow", "Hawk", "Owl", "Crow", "Deer", "Bear", "Groundhog",
+        "Elk", "Beaver", "Wolf", "Fox", "Boar", "Elephant", "Lion", "Tiger",
+        "Bobcat", "Panda", "Monkey", "Ape", "Coyote", "Hippopotamus", "Alligator", "Buffalo",
+        "Mammoth", "Dinosaur", "Velociraptor", "T-Rex", "Panther", "Jaguar", "Giraffe",
+        // 4 - MYTHICAL CREATURES
+        "Dragon", "Gryphon", "Centaur", "Unicorn", "Werewolf", "Vampire", "Jackalope", "Yeti",
+        "Sasquatch", "Elf", "Dwarf", "Faerie", "Witch", "Wizard", "Hydra", "Kraken",
+        "Minotaur", "Basilisk", "Golem", "Troll", "Ogre", "Giant", "Bigfoot", "Alien",
+        "Serpent", "Wyrm", "Angel", "Demon", "Satyr", "Sprite", "Goblin", "Mummy",
+        // 5 - HOUSEHOLD
+        "Table", "Chair", "Bed", "Couch", "Spoon", "Knife", "Fork", "Mug",
+        "Glass", "Mirror", "Door", "Window", "Stairs", "Attic", "Basement", "Computer",
+        // 6 - MEDIA
+        "Book", "Poem", "Zine", "Blog", "*Painting", "*Drawing", "Photo", "Sculpture",
+        "Model", "Record", "Album", "Song", "*Design", "Font", "Logo", "Article",
+        // 7 - GEOGRAPHY
+        "Mountain", "Hill", "Glade", "Cliff", "Ocean", "Lake", "River", "Creek",
+        "Prarie", "Desert", "Valley", "Tundra", "Forest", "Jungle", "Woods", "Swamp",
+        "Grove", "Wetland", "Clearing", "Plain", "Canyon", "Wasteland", "City", "Farm",
+        "Stream", "Coast", "Beach", "Island", "Rainforest", "Tropics", "Cavern", "Cave",
+        // 8 - FLORA / WEATHER
+        "Tree", "Root", "Bark", "Leaf", "Branch", "Twig", "Fern", "Flower",
+        "Seed", "Mushroom", "Fruit", "Houseplant", "Berry", "Vine", "Shrub", "Sapling",
+        "Storm", "Wind", "Rain", "Gale", "Lightning", "Thunder", "Mist", "Sunshine",
+        // 9 - OCCUPATIONS
+        "Builder", "Teacher", "Leader", "Clerk", "Servant", "Artist", "Writer", "Manager",
+        "Repairer", "Farmer", "Driver", "Librarian", "Merchant", "Mender", "Officer", "Caretaker",
+        "Baker", "Cook", "Assistant", "Doctor",
+        // 10 - HOBBIES
+        "*Knitting", "*Sewing", "*Storytelling", "*Singing", "*Dancing", "*Gaming", "*Science", "*Physics",
+        "*Gardening", "*Mathematics", "*Traveling", "*Cooking", "*Puzzling", "*Collecting", "*Reading", "*Coding",
+        // 11 - TOOLS / INSTRUMENTS
+        "Shovel", "Rake", "Hammer", "Saw", "Plow", "Blade", "Bow", "Knife",
+        "Guitar", "Piano", "Flute", "Violin", "Trumpet", "Bass", "Synth", "Drum",
+        "Harp", "Horn", "Viola", "Cello", "Banjo", "Ukulele", "Shaker", "Cowbell",
+        // 12 - COSMOS
+        "Star", "Sun", "Moon", "Comet", "Meteor", "Galaxy", "Satellite", "Cloud",
+        "Planet", "Void", "Abyss", "Nebula", "Vortex", "Dream", "Cosmos", "Light",
+        // 13 - ACTIVITIES
+        "*Troublemaking", "*Hugs", "*High-Fives", "*Snacks", "*Letters", "*Notes", "*Giving", "*Trading",
+        "*Compliments", "*Friend-Making", "*Challenges", "*Competitions", "*Games", "*Contests", "*Sports", "*Jokes",
+        // 14 - TRINKETS
+        "Button", "Pin", "Hat", "Hair", "Mustache", "Glasses", "Notebook", "Ribbon",
+        "Hankerchief", "Doll", "Ring", "Necklace", "Tattoo", "Memento", "Trinket", "Charm",
+        // 15 - CREATIVE
+        "*Nonsense", "*Improv", "*Play", "*Short-Stories", "*Doodling", "*Crayons", "*Rhymes", "*DIY-ing",
+        "*Sketches", "*Daydreaming", "Journal", "Sketchbook", "*Tabletop Games", "*Crafting", "*Visiting", "*Exploring",
+        // 16 - RELATIONSHIPS
+        "Father", "Mother", "Sister", "Brother", "Grandfather", "Grandmother", "Aunt", "Uncle",
+        "Niece", "Nephew", "Cousin", "Sibling", "Son", "Daughter", "Child", "Friend",
+        // 17 - FOOD
+        "Cereal", "Roll", "Cassarole", "Pasta", "Oatmeal", "Sandwich", "Burger", "Pizza",
+        "Dessert", "Roast", "Salad", "Panini", "Taco", "Burrito", "Tofu", "Vegetables",
+        "Omelette", "Chili", "Stir Fry", "Sauce", "Jerky", "Wrap", "Pie", "Pot Pie",
+        "Beans", "Bread", "Muffins", "Cupcakes", "Cake", "Scones", "Peanut Butter", "Peanut",
+        "Cashew", "Almond", "Smoothie", "Milkshake", "Soda", "Lemonade", "Wine", "Juice",
+        // 18 - CLOTHES
+        "Shirt", "Suit", "Pants", "Tie", "Dress", "Shoes", "Socks", "Hat",
+        "Briefs", "Underwear", "Belt", "Suspenders", "Bowtie", "Cap", "T-Shirt", "Pocket",
+        // 19 - BODY PARTS
+        "Hand", "Foot", "Leg", "Nose", "Eye", "Ear", "Chin", "Arm",
+        // 20 - Misc
+        "Mischief", "Fool", "MONTH", "MONTH", "MONTH", "MONTH", "MONTH",
+    ];
+
+    var spring = [
+        "Spring", "Mud", "Dirt", "Earth", "Daffodil", "Robin", "Petal", "Clover",
+        "Morel", "*Mist", "Strawberry", "Blueberry", "*Rain", "Thunderstorm", "Grass", "Dandelion",
+        "Tulip", "Crocus", "Lily", "*Green", "*Brown", "*Water", "Blossum", "Pear", "Bulb",
+        "Rhubarb", "Potato", "*Fertility", "*Romance", "Wren", "*Flirtation", "*Life", "*Rebirth",
+        "Jam", "Marmalade", "Greens", "Pollen", "Nest", "*Awakening", "Songbird", "Melody",
+        "Tune", "*Harmony", "*Nature", "Sprout", "Sapling", "Baby", "Egghunt", "*Lace",
+        "MONTH",
+    ];
+
+    var summer = [
+        "Summer", "Heat", "Pool", "Daisy", "Black-Eyed Susan", "Marigold", "Hibiscus", "Sunflower",
+        "Rose", "Apricot", "Cherry", "Raspberry", "Blackberry", "Plum", "Mango", "Beach",
+        "Jam", "Drought", "Campfire", "*Yellow", "*Fire", "Sand", "Finch", "*Love",
+        "*Friendship", "*Bread", "*Ice Cream", "Watermelon", "*Treats", "Egg", "Eggplant", "Avocado",
+        "Skirt", "Shorts", "Sandals", "Sprinkler", "Pond", "Barbeque", "Grill", "Cookout",
+        "*Hiking", "Deck", "Lawn", "Garden", "Fire Pit", "*Camping", "Camp", "Tent",
+        "MONTH",
+    ];
+
+    var autumn = [
+        "Autumn", "Fall", "*Leaves", "*Orange", "*Red", "*Purple", "Bonfire", "Squash",
+        "Pumpkin", "Tomato", "Mums", "Begonia", "Grackle", "Dead", "Ghost", "Skeleton",
+        "*Witchcraft", "Cauldron", "Spell", "Harvest", "Turkey", "Gratitude", "Cider", "Apple",
+        "Cinnamon", "Maple", "*Plaid", "*Flannel", "*Boots", "Scarecrow", "Raven", "*Tea",
+        "Vest", "Jacket", "Hoodie", "Hayride", "*Soup", "Cardigan", "Scare", "Syrup",
+        "Vision", "Nightmare", "Starling", "Coffin", "Graveyard", "Corn", "Tombstone", "Boot",
+        "MONTH"
+    ];
+
+    var winter = [
+        "Winter", "*Frost", "*Snow", "*Ice", "*Blue", "Blanket", "Fireplace", "Coat",
+        "Scarf", "Mitten", "Junco", "Cardinal", "Sled", "*Bells", "*Carols", "*Death",
+        "*Sleep", "*Silence", "*Presents", "*Cookies", "*Brownies", "Pancake", "*Nog", "*Cocoa",
+        "*Chocolate", "*Spirits", "Snowman", "Snowball", "*Coffee", "*Fog", "*Sleet", "Nap",
+        "Sweater", "Toy", "Tinsel", "Stew", "Chowder", "Waffle", "Sugar", "Candy",
+        "Chimney", "Nutmeg", "Ginger", "Snowflake", "Popcorn", "Cookie", "*Hibernation", "Candle",
+        "MONTH"
+    ];
+
+    var adjs = [
+        // 0 - EMOTION
+        "Happy", "Friendly", "Grumpy", "Grouchy", "Sleepy", "Furious", "Giddy", "Playful",
+        "Silly", "Sad", "Melancholy", "Frightened", "Thoughtful", "Caring", "Bubbly", "Lovesick",
+        // 1 - TONE
+        "Sanguine", "Serene", "Peaceful", "Spooky", "Haunted", "Somber", "Reflective", "Delighted",
+        "Jubilant", "Serious", "Professional", "Comical", "Triumphant", "Dramatic", "Grandiloquent", "Fancy",
+        // 2 - TEXTURE
+        "Sandy", "Rough", "Smooth", "Sharp", "Dull", "Solid", "Squishy", "Spiky",
+        "Scratchy", "Soft", "Hard", "Fuzzy", "Lumpy", "Velvet", "Slimy", "Clammy",
+        // 3 - SIZE / FLAVOR
+        "Little", "Big", "Tiny", "Miniature", "Gigantic", "Enormous", "Bulky", "Short",
+        "Tall", "Long", "Wide", "Stout", "Sweet", "Bitter", "Sour", "Spicy",
+        // 4 - BEHAVIOR
+        "Dancing", "Leaping", "Jumping", "Sleeping", "Shouting", "Barking", "Chattering", "Hungry",
+        "Singing", "Clapping", "Fighting", "Sneaky", "Disorganized", "Clean", "Sexy", "Disgruntled",
+        "Troublesome", "Quarrelsome", "Itchy", "Clamboring", "Clumsy", "Pouting", "Obstinate", "Ironic",
+        "Curious", "Disagreeable", "Obnoxious", "Seductive", "Alluring", "Rambling", "Blathering",
+        // 5 - MATERIAL
+        "Silver", "Golden", "Iron", "Copper", "Wooden", "Paper", "Stone", "Foam",
+        "Ghostly", "Ethereal", "Fiery", "Icy", "Electric", "Clay", "Brass",
+        "Bronze", "Tin", "Granite", "Marble", "Plastic", "Cardboard", "Glass", "Abstract",
+        // 6 - APPEARANCE
+        "Shiny", "Colorful", "Rainbow", "Beautiful", "Lovely", "Pretty", "Ugly", "Crisp",
+        "Checkered", "Ornate", "Furry", "Hairy", "Jeweled", "Striped", "Spotted", "Plaid",
+        // 7 - TIME
+        "Early", "Late", "Immortal", "Ancient", "Youthful", "Young", "Fledgling", "Elder",
+        "Vintage", "Prompt", "Retro", "Classic", "Midnight", "Endless", "Eternal", "Infinite",
+        // 8 - QUALITY
+        "Flawless", "Perfect", "Pristine", "Dirty", "Broken", "Scuffed", "Grimy", "Rare",
+        "New", "Fashionable", "Damaged", "Recycled", "Indie", "Hipster", "Pop", "Punk",
+        "Goth", "Emo", "Cool", "Stylish", "Secondhand", "Exquisite", "Custom", "DIY",
+        "Uppity", "Elitist", "High-Class", "Trashy", "Muddy", "Bloody", "Gross", "Sticky",
+        // 9 - CHARACTERISTICS
+        "Toothless", "Delicious", "Sturdy", "Responsible", "Funky", "Formidable", "Charismatic", "Eccentric",
+        "Eloquent", "Timid", "Quiet", "Noisy", "Independent", "Dizzy", "Hypnotic", "Melodic",
+        "Obscure", "Loquacious", "Ominous", "Suspicious", "Blunt", "Befuddling", "Encrypted", "Obfuscated",
+        "Confounding", "Darn", "Divine", "Omnipotent", "Clever", "Cunning", "Robotic", "Digital",
+        // 10- PERSONALITY
+        "Timid", "Ornery", "Bratty", "Chatty", "Lazy", "Kind", "Seedy", "Trustworthy",
+        "Sly", "Mischevious", "Generous", "Compassionate", "Caring", "Emotional", "Lackadaisical", "Scatterbrained",
+        "Focused", "Orderly", "Messy", "Social", "Long-Winded", "Rebel", "Anarchist", "Competitive",
+        "Cantankerous", "Magnanimous", "Benevolent", "Bright", "Intelligent", "Personable", "Agreeable", "Merciful",
+        // 11- ESSENCE
+        "Spiritual", "Demonic", "Holy", "Unholy", "Tranquil", "Enlightened", "Astral", "Cosmic",
+        "Radiant", "Hypothetical", "Metaphorical", "Mythological", "Legendary", "Soul", "Dark", "Light",
+        // 12- VALUE
+        "Expensive", "Cheap", "Luxury", "Worthless", "Designer", "Unique", "Authentic", "Discount",
+        "Refurbished", "Priceless", "Irreplaceable", "Premium", "Lackluster", "Antique", "Imitation", "Counterfeit",
+        "Critical", "Non-essential", "Essential", "Extra", "Superfluous", "Redundant", "Affordable", "Unreasonable",
+        // 13- RELATIONAL
+        "Affectionate", "Single", "Family", "Commanding", "Listening", "Lonely", "Lonesome", "Annoying",
+        "Pestering", "Diplomatic", "Empathetic", "Popular", "Loyal", "Party", "Pretentious", "Judgemental",
+        "Inconsiderate", "Rude", "Polite", "Gentle", "Tender", "Mild-Mannered", "Loud", "Rowdy",
+        "Rambunctious", "Aloof", "Dedicated", "Mean", "Cruel", "Kindhearted", "Nurturing", "Wise",
+        // 14- COLOR
+        "Red", "Orange", "Yellow", "Green", "Blue", "Violet", "Pink", "White",
+        "Black", "Gray", "Brown", "Tan", "Crystal", "Invisible", "Metallic", "Chromatic",
+        // 15- MISC
+        "Audio", "Video", "Cyber", "Futuristic", "Dangerous", "Burning", "Damp", "Smelly",
+        "Petrified", "Literary", "Controversial", "Existential", "Metaphysical", "Philosophical", "Celebratory", "Wireless",
+        "Baby", "Viral", "Internet", "Electronic", "Noble", "Mini", "Mega", "Harmonious", "Entrepreneurial", "Smokey",
+        "Sprouting", "Snoozing", "Awakening",
+    ];
+
+    var monthNames = ["January", "February", "March", "April",
+                      "May", "June", "July", "August",
+                      "September", "October", "November", "December"];
+
+    var weekdays = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+
+    var curDate = new Date();
+    curDate.setDate(1);
+
+    var rollA = 0, rollB = 0;
+
+    // 32-bit xorshift
+    function next(state) {
+        state ^= state << 13;
+        state ^= state >>> 17;
+        state ^= state << 5;
+        return state+(2**31-1);
+    }
+
+    function divideYear(date) {
+        return Math.floor((date.getFullYear()+yearOffset(date))/yearDivisor(date));
+    }
+
+    function yearDivisor(date) {
+        return 1 + (5-(date.getDate()%6));
+    }
+
+    function yearOffset(date) {
+        return date.getDate()%11;
+    }
+
+    function legendYear(date) {
+        return (date.getFullYear()+yearOffset(date))%yearDivisor(date) == 0;
+    }
+
+    function dateSum(date, divYear) {
+        var sum;
+        if(divYear) {
+            sum = divideYear(date);
+        } else {
+            sum = date.getFullYear();
+        }
+        sum *= 12;
+        sum += date.getMonth();
+        sum *= 31;
+        sum += date.getDate()-1;
+        return sum;
+    }
+
+       function buildHoliday(quality, type, topic, seasonal, adj, tone, date) {
+        var base, spec = "";
+        if(type == null || (topic == null && seasonal == null)) {
+            return "";
+        }
+        if(topic == "MONTH") {
+            topic = monthNames[date.getMonth()];
+        }
+        if(seasonal == "MONTH") {
+            seasonal = monthNames[date.getMonth()];
+        }
+        if(type.charAt(0) == '*') {
+            base = type.substring(1);
+            if(base == "DOW") {
+               base = " " + weekdays[date.getDay()];
+            }
+            if(tone != null) {
+                spec = tone;
+            }
+            if(adj != null) {
+                if(spec != "") {
+                    spec = spec.concat(" ");
+		        }
+		        spec = spec.concat(adj);
+            }
+            if(seasonal != null) {
+                if(seasonal.charAt(0) == '*') {
+                    seasonal = seasonal.substring(1);
+                }
+				if(spec != "") {
+				    spec = spec.concat(" ")
+                }
+                spec = spec.concat(seasonal);
+            }
+            if(topic != null) {
+                if(topic.charAt(0) == '*') {
+                   topic = topic.substring(1);
+                }
+				if(spec != "") {
+				    spec = spec.concat(" ")
+                }
+                spec = spec.concat(topic);
+            }
+            base = spec.concat(base).trim();
+        } else {
+            base = type.concat(" of");
+
+            if(tone != null) {
+                base = tone.concat(" " + base);
+            }
+
+            var needsThe = true;
+
+            if(adj != null) {
+                spec = adj;
+            }
+            if(seasonal != null) {
+                if(seasonal.charAt(0) == '*') {
+                    needsThe = false;
+                    seasonal = seasonal.substring(1);
+                }
+				if(spec != "") {
+				    spec = spec.concat(" ")
+                }
+                spec = spec.concat(seasonal);
+            }
+            if(topic != null) {
+                if(topic.charAt(0) == '*') {
+                    needsThe = false;
+                    topic = topic.substring(1);
+                } else {
+                    needsThe = true;
+                }
+				if(spec != "") {
+				    spec = spec.concat(" ")
+                }
+                spec = spec.concat(topic);
+            }
+            if(needsThe) {
+                base = base.concat(" the");
+            }
+            base = base.concat(" " + spec).trim();
+        }
+
+        console.log(date.getFullYear()+"/"+(date.getMonth()+1)+"/"+date.getDate()+" " + base);
+        return "<span class=\"" + quality + "\">" + base + "</span>";
+    }
+
+    function initRolls(date) {
+        var seed = -1123581321345589;
+        rollA = next(dateSum(date,true)+seed);
+        rollB = next(dateSum(date,false)+seed);
+    }
+
+    function nextA() {
+        rollA = next(rollA);
+        rollB = next(rollB);
+        return rollA;
+    }
+
+    function nextB() {
+        rollA = next(rollA);
+        rollB = next(rollB);
+        return rollB;
+    }
+
+    function testRNG() {
+        var roll = (2018*12+11)*31+15;
+        roll = next(roll);
+        var low = roll;
+        var high = roll;
+        var avg = roll;
+        for(i=1;i<1000;i++) {
+            roll = next(roll);
+            if(roll < low) {
+                low = roll;
+            } else if(roll > high) {
+                high = roll;
+            }
+            avg = (i*avg+roll)/(i+1);
+        }
+        console.log("PRNG TEST COMPLETE");
+        console.log("LOW: " + low);
+        console.log("HIGH:" + high);
+        console.log("AVG: " + avg);
+     }
+
+    function loadMonth() {
+        var date = new Date(curDate.getFullYear(), curDate.getMonth(), curDate.getDate(), 0,0,0,0);
+        var month = date.getMonth();
+        document.getElementById("main").classList.remove("winter", "spring", "summer", "autumn");
+        var season;
+        if(month < 2 || month == 11) {
+            document.getElementById("main").classList.add("winter");
+            season = winter;
+        } else if(month < 5) {
+            document.getElementById("main").classList.add("spring");
+            season = spring;
+        } else if(month < 8) {
+            document.getElementById("main").classList.add("summer");
+            season = summer;
+        } else {
+            document.getElementById("main").classList.add("autumn");
+            season = autumn;
+        }
+        document.getElementById("monthlabel").innerHTML = monthNames[month];
+        document.getElementById("yearlabel").innerHTML = date.getFullYear();
+
+        var dateshift = (date.getDay()+6)%7;
+        var string = "";
+        for(i=0;i<dateshift;i++) {
+            string = string.concat("<li>-<div class=\"daylabel\"></div></li>\n");
+        }
+        while(date.getMonth() == month) {
+            var quastring = "none";
+            initRolls(date);
+            var type=null, topic=null, seasonal=null, adj=null, tone=null;
+
+            var qRoll = nextA();
+            var holiday="";
+
+            if(qRoll < LEGEND_RATE && legendYear(date)) {
+                type = types[nextB()%types.length];
+                topic = topics[nextB()%topics.length];
+                seasonal = season[nextB()%season.length];
+                adj = adjs[nextB()%adjs.length];
+                tone = adjs[nextB()%adjs.length];
+                holiday = buildHoliday("legend", type, topic, seasonal, adj,tone,date);
+                quastring = "lgnd";
+            } else if(qRoll < RARE_RATE) {
+                type = types[nextA()%types.length];
+                mixRoll = nextB()%4;
+                switch(mixRoll) {
+                    case 0: // ADJ+SEAS+TOPIC+TYPE
+                        topic = topics[nextA()%topics.length];
+                        seasonal = season[nextA()%season.length];
+                        adj = adjs[nextB()%adjs.length];
+                        break;
+                    case 1: // TONE+SEAS+TOPIC+TYPE
+                        topic = topics[nextA()%topics.length];
+                        seasonal = season[nextA()%season.length];
+                        tone = adjs[nextB()%adjs.length];
+                        break;
+                    case 2: // TONE+ADJ+TOPIC+TYPE
+                        topic = topics[nextA()%topics.length];
+                        adj = adjs[nextB()%adjs.length];
+                        tone = adjs[nextB()%adjs.length];
+                        break;
+                    default: // TONE+ADJ+SEAS+TYPE
+                        seasonal = season[nextA()%season.length];
+                        adj = adjs[nextB()%adjs.length];
+                        tone = adjs[nextB()%adjs.length];
+                        break;
+                }
+                holiday = buildHoliday("rare", type, topic, seasonal, adj,tone,date);
+                quastring = "rar";
+            } else if(qRoll < SPEC_RATE) {
+                type = types[nextA()%types.length];
+                mixRoll = nextA()%5;
+                switch(mixRoll) {
+                    case 0: // SEAS+TOPIC+TYPE
+                        topic = topics[nextA()%topics.length];
+                        seasonal = season[nextA()%season.length];
+                        break;
+                    case 1: // ADJ+TOPIC+TYPE
+                        topic = topics[nextA()%topics.length];
+                        adj = adjs[nextA()%adjs.length];
+                        break;
+                    case 2: // ADJ+SEAS+TYPE
+                        seasonal = season[nextA()%season.length];
+                        adj = adjs[nextA()%adjs.length];
+                        break;
+                    case 3: // TONE+TOPIC+TYPE
+                        topic = topics[nextA()%topics.length];
+                        tone = adjs[nextA()%adjs.length];
+                        break;
+                    default: // TONE+SEASON+TYPE
+                        seasonal = season[nextA()%season.length];
+                        tone = adjs[nextA()%adjs.length];
+                        break;
+                }
+                holiday = buildHoliday("special", type, topic, seasonal, adj,tone,date);
+                quastring = "spec";
+            } else if(qRoll < REG_RATE) {
+                type = types[nextA()%types.length];
+                if(nextA()%2==0) {
+                    topic = topics[nextA()%topics.length];
+                } else {
+                    seasonal = season[nextA()%season.length];
+                }
+                holiday = buildHoliday("regular", type, topic, seasonal, adj,tone,date);
+                quastring = "reg";
+            }
+
+            string = string.concat("<li><div class=\"dayno " + quastring + "\">");
+            string = string.concat(date.getDate() + "</div><div class=\"daylabel\">");
+
+            if(holiday.length > 0) {
+                 string = string.concat(holiday);
+            }
+
+            string = string.concat("</div></li>\n");
+            date.setDate(date.getDate()+1);
+        }
+        document.getElementById("days").innerHTML = string;
+    }
+
+    function nextMonth() {
+        curDate.setMonth(curDate.getMonth()+1);
+        loadMonth();
+    }
+
+    function prevMonth() {
+        curDate.setMonth(curDate.getMonth()-1);
+        loadMonth();
+    }
+</script>
+
+<div class="winter" id="main">
+  <div class="month">
+    <ul>
+      <li class="prev" onclick="prevMonth()">&#x25C1;</li>
+      <li class="next" onclick="nextMonth()">&#x25B7;</li>
+      <li>
+        <span id="monthlabel"></span><br>
+        <span id="yearlabel" style="font-size:16px"></span>
+      </li>
+    </ul>
+  </div>
+
+  <ul class="weekdays">
+    <li>MON</li>
+    <li>TUE</li>
+    <li>WED</li>
+    <li>THU</li>
+    <li>FRI</li>
+    <li>SAT</li>
+    <li>SUN</li>
+  </ul>
+
+  <ul class="days" id="days">
+  </ul>
+</div>
+<script>
+    loadMonth();
+</script>
