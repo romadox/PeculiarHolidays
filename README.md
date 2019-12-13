@@ -3,7 +3,7 @@
 
 The Peculiar Holidays are a set of quirky alternative holidays, generated algorithmically to provide both variety & reptition as time goes along.
 
-The official calendar of holidays can be found here: <a href="https://www.nashhigh.com/misc/peculiar-holiday-calendar">nashhigh.com/misc/peculiar-holiday-calendar</a>. The embedded calendar HTML code is also in this repository as <a href="https://github.com/romadox/PeculiarHolidays/blob/master/cal.html">cal.html</a>.
+The official calendar of holidays can be found here: <a href="https://www.nashhigh.com/misc/peculiar-holiday-calendar">nashhigh.com/misc/peculiar-holiday-calendar</a>. It's entirely scripted, so you can explore all future (and even past) holidays. The embedded calendar HTML code is also in this repository as <a href="https://github.com/romadox/PeculiarHolidays/blob/master/cal.html">cal.html</a>.
 
 I've also generated an <a href="https://github.com/romadox/PeculiarHolidays/blob/master/PeculiarHolidays-2019-1-1-to-2042-11-19.ics">iCalendar</a> and a <a href="https://calendar.google.com/calendar/b/1?cid=bGpxMTZqMjBrOWFhZW85Z29xbHJxbGk0Y3NAZ3JvdXAuY2FsZW5kYXIuZ29vZ2xlLmNvbQ">Google Calendar</a> with the next ~20 years of Peculiar Holidays, if you want to import it to you phone/digital calendar program.
 
