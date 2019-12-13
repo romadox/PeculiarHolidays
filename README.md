@@ -14,12 +14,14 @@ I've also generated an <a href="https://github.com/romadox/PeculiarHolidays/blob
   <li><h4>How do I celebrate a Peculiar Holiday?</h4><br>
     However you want! The calendar script intentionally gives you only holiday names to work with. The rest is up to you!</li>
   <li><h4>Does everyone's calendar look different?</h4><br>
-    No--the holidays are the same for everyone. Each holiday is created based on the date it falls on, so 5/10/2020 will always be Miniature Squirrelmas. The goal for Peculiar Holidays was to create new, fun holiday ideas for people to celebrate together, so it was important that everyone would see the same holidays!</li>
+    No--the holidays are the same for everyone. Each holiday is created based on the date it falls on, so 5/10/2020 will always be <b>Miniature Squirrelmas</b>. The goal for Peculiar Holidays was to create new, fun holiday ideas for people to celebrate together, so it was important that everyone would see the same holidays!</li>
   <li><h4>Do holidays repeat each year?</h4><br>
     Not exactly. If the holidays always repeated, we'd either be stuck with the same ~40-50 holidays, or we'd have an ever-accumulating mass of holidays. Plus, we might get stuck with a boring holiday for all of time! Instead, holidays can repeat <i>for a few years</i>. Some holidays might not repeat at all, others might repeat for up to 6 years. That way each year should have a few repeats and plenty of brand new holidays.</li>
   <li><h4>What are the colors for?</h4><br>
     The font/banner color of a holiday indicates its rarity. Holidays can either be: Regular (Green), Special (Blue), Rare (Purple), or Legendary (Orange). You'll also notice that rarer holidays have more words in their title!
-    Each month should have a few regular holidays, and possibly a special holiday. Rare holidays might only occur a couple times a year, and legendary holidays are even more sparse! (2020 has a Legendary holiday on 7/30, "Entreprenurial Fest of the Party Shorts Sun"; but after that there isn't one until the 2030's!)</li>
+    Each month should have a few regular holidays, and possibly a special holiday. Rare holidays might only occur a couple times a year, and legendary holidays are even more sparse! (2020 actually has a Legendary holiday on 7/30, <b>Entreprenurial Fest of the Party Shorts Sun</b>; but after that there isn't one until the 2030's!)</li>
   <li><h4>What if I don't want to use these holidays? Can I generate my own?</h4><br>
-    Sure! If you don't want to use the official set of holidays, just fork this code! In the function "initRolls(date)" there is a master seed value--changing it is the simplest way to get an entirely different set of holidays. Alternately, you can modify the various word tables to create your own possibilities or even set a specific theme.</li>
+    Sure! If you don't want to use the official set of holidays, just fork this code! In the function <code>initRolls(date)</code> there is a master seed value--changing it is the simplest way to get an entirely different set of holidays. Alternately, you can modify the various word tables to create your own possibilities or even set a specific theme.</li>
+  <li><h4>Did you make Thanksgiving 2020 "Turkey Day" on purpose?</h4><br>
+    No! I promise! However, I did try out a few different random seeds before launching the calendar, and that <i>was</i> one of the reasons I ended up settling on this seed. (Seemed fated, right?)</li>
 </ul>
